@@ -51,20 +51,20 @@ namespace sw_part_auto_test
 
             Console.WriteLine(" - SolidWorks App Instance Created");
             
-            var path = "C:\\Users\\bolinger\\Desktop\\test install\\C-HSSX.blob.SLDPRT";
+            var blobPath = "C:\\Users\\bolinger\\Desktop\\test install\\C-HSSX.blob.SLDPRT";
 
             DocumentSpecification documentSpecification =
-                SWDocSpecification.GetDocumentSpecification(swApp, path);
+                SWDocSpecification.GetDocumentSpecification(swApp, blobPath);
 
             if (documentSpecification == null)
             {
                 Console.WriteLine(errorMessage + "Could not Get Document Specification for - " +
-                    path);
+                    blobPath);
 
                 return;
             }
 
-            Console.WriteLine(" - Obtained Document Specification for - " + path);
+            Console.WriteLine(" - Obtained Document Specification for - " + blobPath);
 
             var stopwatch = new Stopwatch();
 
@@ -77,7 +77,7 @@ namespace sw_part_auto_test
 
             if (model == null)
             {
-                Console.WriteLine(" - ERROR - Could not Open Document - " + path);
+                Console.WriteLine(" - ERROR - Could not Open Document - " + blobPath);
 
                 Console.WriteLine(" - File Open Operation - Elapsed Time: " +
                     stopwatch.ElapsedMilliseconds + "ms");
@@ -85,7 +85,7 @@ namespace sw_part_auto_test
                 return;
             }
 
-            Console.WriteLine(" - Opened SolidWorks Document - " + path);
+            Console.WriteLine(" - Opened SolidWorks Document - " + blobPath);
 
             Console.WriteLine(" - File Open Operation - Elapsed Time: " +
                     stopwatch.ElapsedMilliseconds + "ms");
@@ -105,35 +105,43 @@ namespace sw_part_auto_test
 
             Console.WriteLine(" - Created Equation Manager Instance");
 
-            path = "C:\\Users\\bolinger\\Desktop\\test install\\SWmicroservice.config";
+            var programStatePath = "C:\\Users\\bolinger\\Desktop\\test install\\SWmicroservice.config";
 
-            var programStatePath = FileValidate.CheckAndReturnString(path);
+            var validatedPathProgramState = FileValidate.CheckAndReturnString(programStatePath);
 
-            ConfirmOrCreateFile(
+            ConfirmExistingOrCreateNewFile(
                 swApp,
+                validatedPathProgramState,
                 programStatePath,
-                path,
                 " - Progam State Config File Found"
                 );
-            
-            path = "C:\\Users\\bolinger\\Desktop\\test install\\DDO.blemp";
 
-            var blempDDOpath = FileValidate.CheckAndReturnString(path);
-
-            ConfirmOrCreateFile(
+            FileWriteAndConfirm(
                 swApp,
+                validatedPathProgramState, 
+                "0",
+                errorMessage + "Could Not Initialize Program State Config File"
+                );
+
+            Console.WriteLine(" - Program State Config File - Successfully Initialized");
+
+            var blempDDOpath = "C:\\Users\\bolinger\\Desktop\\test install\\DDTO.blemp";
+
+            var validatedPathBlempDDO = FileValidate.CheckAndReturnString(blempDDOpath);
+
+            ConfirmExistingOrCreateNewFile(
+                swApp,
+                validatedPathBlempDDO,
                 blempDDOpath,
-                path,
                 " - Blemp DDO File Found"
                 );
-            /*
+
             Daemon.Start(
                 model,
                 equationManager,
-                blempDDOpath,
-                programStatePath
+                validatedPathBlempDDO,
+                validatedPathProgramState
             );
-            */
 
             Console.WriteLine(" ... Press Any Key to End Program");
             Console.Read();
@@ -144,7 +152,7 @@ namespace sw_part_auto_test
             Console.WriteLine("TOPP App SolidWorks C# Daemon Exit");
         }
 
-        private static void ConfirmOrCreateFile(ISldWorks swApp,
+        private static void ConfirmExistingOrCreateNewFile(ISldWorks swApp,
             string validateFile, string expectedPath, string message)
         {
             if (validateFile == null)
@@ -168,6 +176,20 @@ namespace sw_part_auto_test
             }
             else
                 Console.WriteLine(message);
+        }
+
+        private static void FileWriteAndConfirm(ISldWorks swApp, string validatedPath,
+            string writeMessage, string errorMessage)
+        {
+            if (!FileWrite.WriteStringToFileFalseOnFail(validatedPath, writeMessage))
+            {
+                Console.WriteLine(errorMessage);
+
+                Console.WriteLine(" - Closing All Open SolidWorks Documents");
+                swApp.CloseAllDocuments(true);
+
+                return;
+            }
         }
     }
 }

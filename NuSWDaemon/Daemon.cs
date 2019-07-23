@@ -1,4 +1,5 @@
-﻿using SolidWorks.Interop.sldworks;
+﻿using NuSWDaemon;
+using SolidWorks.Interop.sldworks;
 using System;
 using System.IO;
 using System.Threading;
@@ -13,13 +14,11 @@ namespace sw_part_auto_test
         {
             Console.WriteLine(" -- Daemon - Start --");
             
-            var programState = "0";
-            /*
             string current = null;
             string compare = null;
             
             do {
-                
+                /*
             var rawBlempString = Blemp.LoadDDO(blempDDOpath);
                 
                 if (rawBlempString == null)
@@ -77,45 +76,13 @@ namespace sw_part_auto_test
                     } catch(ArgumentOutOfRangeException){ }
                     
                 }
+                */
 
                 Thread.Sleep(300);
-
-               programState = GetProgramState(programStatePath);
-
-                if(programState == null)
-                {
-                    return;
-                }
-
-           } while (string.Equals(programState, "0"));
-           */
+                
+           } while (RunState.GetRunState(programStatePath));
+           
             Console.WriteLine(" -- Daemon - Exit --");
-        }
-
-        private static string GetProgramState(string path)
-        {
-            try
-            {
-                var programState = File.ReadAllText(path).Substring(0, 1);
-
-                return programState;
-            }
-            catch (ArgumentNullException)
-            {
-                return null;
-            }
-            catch (ArgumentException)
-            {
-                return null;
-            }
-            catch (FileNotFoundException)
-            {
-                return null;
-            }
-            catch (Exception)
-            {
-                return null;
-            }
         }
     }
 }
