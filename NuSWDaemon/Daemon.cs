@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SolidWorks.Interop.sldworks;
+using System;
 using System.IO;
 using System.Threading;
 
@@ -6,15 +7,16 @@ namespace sw_part_auto_test
 {
     class Daemon
     {
-        public static void Start()
+        public static void Start(ModelDoc2 model,
+            EquationMgr equationManager, String blempDDOpath,
+            String programStatePath)
         {
+            Console.WriteLine(" -- Daemon - Start --");
             
-            var blempDDOpath = "C:\\Users\\bolinger\\Desktop\\test install\\programFiles\\blemp\\DDO.blemp";
-            var programStatePath = "C:\\Users\\bolinger\\Desktop\\test install\\programFiles\\config\\SWmicroservice.config";
             var programState = "0";
-
+            /*
             string current = null;
-           string compare = null;
+            string compare = null;
             
             do {
                 
@@ -28,8 +30,6 @@ namespace sw_part_auto_test
                 if (string.Compare(rawBlempString, "") != 0)
                 {
                 }
-
-                // Console.Read();
 
                 string blempString = "";
 
@@ -59,16 +59,16 @@ namespace sw_part_auto_test
                                 Config.DDO[2];
                             
                             SWEquation.AddEquation(
-                                Config.equationManager,
+                                equationManager,
                                 equation
                                 );
                             
                             SWEquation.Build(
-                                Config.model
+                                model
                                 );
 
                             SWEquation.DeleteEquation(
-                                Config.equationManager
+                                equationManager
                                 , 0);
                                 
                         }
@@ -88,7 +88,8 @@ namespace sw_part_auto_test
                 }
 
            } while (string.Equals(programState, "0"));
-
+           */
+            Console.WriteLine(" -- Daemon - Exit --");
         }
 
         private static string GetProgramState(string path)
