@@ -1,53 +1,67 @@
-﻿using System;
-using SolidWorks.Interop.sldworks;
+﻿using SolidWorks.Interop.sldworks;
+using System;
 
 namespace sw_part_auto_test
 {
     public class Program
     {
-        public static readonly string PROG_ID = "SolidWorks.Application.24";
-
         static void Main(string[] args)
         {
+            var errorMessage = " ERROR - Program Exit Prematurely - ";
 
-            // LiveUpdateTest();
+            Console.WriteLine("TOPP App SolidWorks C# Daemon Start");
 
-            var swType = SWType.GetFromProgID(PROG_ID);
+            var PROG_ID = "SldWorks.Application.24";
+            
+            var swType = Type.GetTypeFromProgID(PROG_ID);
 
             if (swType == null)
             {
+                Console.WriteLine(errorMessage + "Could not Get SW Type");
+
                 return;
             }
 
-            ISldWorks swApp = CreateSWInstance.Create(swType);
+            Console.WriteLine(" - SolidWorks Type Retrieved");
+            
+            var swApp = (ISldWorks) Activator.CreateInstance(swType);
 
             if (swApp == null)
             {
+                Console.WriteLine(errorMessage + "Could not Instantiate SW Instance");
+
                 return;
             }
 
-            /*
-            var path = "C:\\Users\\bolinger\\Desktop\\test install\\C-HSSX.blob.SLDPRT";
+            Console.WriteLine(" - SolidWorks App Instance Created");
             
+            var path = "C:\\Users\\bolinger\\Desktop\\test install\\C-HSSX.blob.SLDPRT";
+
             DocumentSpecification documentSpecification =
                 SWDocSpecification.GetDocumentSpecification(swApp, path);
 
             if (documentSpecification == null)
             {
+                Console.WriteLine(errorMessage + "Could not Get Document Specification for - " +
+                    path);
+
                 return;
             }
 
-            ModelDoc2 model = (ModelDoc2)swApp.OpenDoc7(
+            Console.WriteLine(" - Obtained Document Specification for - " + path);
+            
+            var model = (ModelDoc2) swApp.OpenDoc7(
                 documentSpecification);
 
             if (model == null)
             {
-                logger.Error("\n ERROR: Could not get Model from " +
-                    "Document Specification\n - Exiting Program");
+                Console.WriteLine(" - ERROR - Could not Open Document - " + path);
 
                 return;
             }
 
+            Console.WriteLine(" - Opened SolidWorks Document - " + path);
+            /*
             Config.model = model;
 
             EquationMgr equationManager = model.GetEquationMgr();
@@ -60,11 +74,15 @@ namespace sw_part_auto_test
             Config.equationManager = equationManager;
 
             Daemon.Start();
-
-            logger.Debug("\n Closing Open SolidWorks Documents" +
-                "\n - Exiting Microservice");
-            swApp.CloseAllDocuments(true);
             */
+
+            Console.Read();
+
+            Console.WriteLine(" - Closing All Open SolidWorks Documents");
+
+            swApp.CloseAllDocuments(true);
+
+            Console.WriteLine("TOPP App SolidWorks C# Daemon Exit");
         }
     }
 }
