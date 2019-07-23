@@ -5,31 +5,26 @@ namespace sw_part_auto_test
 {
     class Blemp
     {
-        public static string LoadDDO(string path)
+        public static string LoadDDTO(string path)
         {
+           
             try
             {
                var rawBlempString = File.ReadAllText(path);
 
-                return rawBlempString;
-            } catch(ArgumentNullException exception)
-            {
-                return null;
-            } catch (ArgumentException exception)
-            {
-                return null;
-            } catch (FileNotFoundException exception)
-            {
-                return null;
+                return rawBlempString.CompareTo("") == 0 ? null : rawBlempString;
             } catch (Exception exception)
             {
+                Console.WriteLine(exception);
+
                 return null;
             }
+            
         }
 
         public static void PopulateDDO(string DDOdata)
         {
-           
+           /*
             string[] equationSegments = DDOdata.Split("$");
 
             if (equationSegments.Length > 1)
@@ -41,6 +36,7 @@ namespace sw_part_auto_test
                     Config.DDO.Add(equationSegments[i]);
                 }
             }
+            */
         }
     }
 }

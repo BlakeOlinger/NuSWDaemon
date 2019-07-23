@@ -12,77 +12,94 @@ namespace sw_part_auto_test
             EquationMgr equationManager, String blempDDOpath,
             String programStatePath)
         {
+            /*
+             * This program listens for a 'call to action bool'
+             *  - the second character in a string from the
+             *  - run state config file for this MS
+             * On TRUE it reads the DDTO, which the GUI MS
+             * will have sent the current set of expressions to
+             * evaluate, then set the GUI's call to action state
+             * to false - meaning it cannot write to the DDTO,
+             * though it will store the command and do it asap,
+             * then this daemon will read the DDTO and implement
+             * the expressions in it, after it resets its own
+             * and the GUI's call to action, turning itself off
+             * and the GUI's write ability on
+             */
             Console.WriteLine(" -- Daemon - Start --");
             
-            string current = null;
-            string compare = null;
-            
             do {
-                /*
-            var rawBlempString = Blemp.LoadDDO(blempDDOpath);
-                
-                if (rawBlempString == null)
-                {
-                    return;
-                }
 
-                if (string.Compare(rawBlempString, "") != 0)
-                {
-                }
+                // RunStateCalltoActionDebugPrompt(programStatePath);
 
-                string blempString = "";
+                if (RunState.TrueForStringCharacterZero(programStatePath, 1, 1)) {
+                    var rawBlempString = Blemp.LoadDDTO(blempDDOpath);
 
-                try
-                {
-                    blempString = File.ReadAllText(blempDDOpath);
-                } catch (IOException)
-                {
-                }
+                    // BlempDDTOdebugPrompt(rawBlempString);
 
-                if (string.Compare(
-                    blempString == null ? "" : blempString ,
-                    "") != 0)
-                {
-                    Blemp.PopulateDDO(rawBlempString);
-
-                    try
+                    if (rawBlempString != null)
                     {
-                        compare = Config.DDO[1];
+                        Blemp.PopulateDDO(rawBlempString);
+                        /*
+                        SWEquation.AddEquation(
+                            equationManager,
+                            equation
+                            );
 
-                        if (string.Compare(current, compare) != 0)
-                        {
-                            
-                            current = compare;
-                            
-                            string equation = Config.DDO[0] + Config.DDO[1] +
-                                Config.DDO[2];
-                            
-                            SWEquation.AddEquation(
-                                equationManager,
-                                equation
-                                );
-                            
-                            SWEquation.Build(
-                                model
-                                );
+                        SWEquation.Build(
+                            model
+                            );
 
-                            SWEquation.DeleteEquation(
-                                equationManager
-                                , 0);
-                                
-                        }
-                        
-                        
-                    } catch(ArgumentOutOfRangeException){ }
-                    
+                        SWEquation.DeleteEquation(
+                            equationManager,
+                            0);
+                            */
+                    }
                 }
-                */
 
                 Thread.Sleep(300);
                 
-           } while (RunState.GetRunState(programStatePath));
+           } while (RunState.TrueForStringCharacterZero(programStatePath, 0, 1));
            
             Console.WriteLine(" -- Daemon - Exit --");
+        }
+
+        private static void BlempDDTOdebugPrompt(string rawBlempString)
+        {
+            if (rawBlempString == null)
+            {
+                Console.WriteLine(" - Blemp DDTO - Empty");
+
+                Console.WriteLine(" ... Press Any Key to Continue");
+                Console.ReadLine();
+            }
+            else
+            {
+                Console.WriteLine(" - Blemp DDTO - Contents:");
+
+                Console.WriteLine(rawBlempString);
+
+                Console.WriteLine(" ... Press Any Key to Continue");
+                Console.ReadLine();
+            }
+        }
+
+        private static void RunStateCalltoActionDebugPrompt(string programStatePath)
+        {
+            if (RunState.TrueForStringCharacterZero(programStatePath, 1, 1))
+            {
+                Console.WriteLine(" - Call to Action State - True");
+
+                Console.WriteLine(" ... Press Any Key to Continue");
+                Console.ReadLine();
+            }
+            else
+            {
+                Console.WriteLine(" - Call to Action State - False");
+
+                Console.WriteLine(" ... Press Any Key to Continue");
+                Console.ReadLine();
+            }
         }
     }
 }

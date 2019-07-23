@@ -119,7 +119,7 @@ namespace sw_part_auto_test
             FileWriteAndConfirm(
                 swApp,
                 validatedPathProgramState, 
-                "0",
+                "01",
                 errorMessage + "Could Not Initialize Program State Config File"
                 );
 
