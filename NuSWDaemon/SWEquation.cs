@@ -27,9 +27,12 @@ namespace sw_part_auto_test
         {
             equationManager.Delete(index);
 
-            if (equationManager.GetCount() != 0)
+            if (equationManager.GetCount() == 0)
             {
-
+                Console.WriteLine(" - Delete Equation - Success");
+            } else
+            {
+                Console.WriteLine(" - WARNING - Delete Equation - Failed");
             }
         }
 
@@ -37,6 +40,10 @@ namespace sw_part_auto_test
         {
 
             if (model.EditRebuild3()) {
+                Console.WriteLine(" - SolidWorks Model - Build - Success");
+            } else
+            {
+                Console.WriteLine(" - WARNING - SolidWorks Model - Build - Failed");
             }
         }
     }

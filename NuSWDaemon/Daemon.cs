@@ -47,22 +47,29 @@ namespace sw_part_auto_test
                         if (equationSegments != null)
                         {
                             Console.WriteLine(" - Valid Equations Found - Processing");
-                            
-                            SWEquation.AddEquation(
-                                equationManager,
-                                equationSegments[0]
-                                );
-                            
-                            SWEquation.Build(
-                                model
-                                );
-                            Console.WriteLine(" ... Press Any Key to Continue");
-                            Console.ReadLine();
-                            /*
-                            SWEquation.DeleteEquation(
-                                equationManager,
-                                0);
-                                */
+
+                            try
+                            {
+                                for (var i = 0; i < equationSegments.Length; ++i)
+                                {
+                                    SWEquation.AddEquation(
+                                        equationManager,
+                                        equationSegments[i]
+                                        );
+
+                                    SWEquation.Build(
+                                        model
+                                        );
+
+                                    SWEquation.DeleteEquation(
+                                        equationManager,
+                                        0);
+                                }
+                            } catch (ArgumentOutOfRangeException exception)
+                            {
+                                Console.WriteLine(exception);
+                            }
+
                         } else
                         {
                             Console.WriteLine(" - WARNING - No Valid Equations for Processing Found");
