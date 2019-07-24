@@ -54,7 +54,7 @@ namespace sw_part_auto_test
             }
             else
             {
-                Console.WriteLine(" - ERROR - DDTO Data - Invalid Format");
+                Console.WriteLine(" - WARNING - DDTO Data - Invalid Format");
 
                 return null;
             }

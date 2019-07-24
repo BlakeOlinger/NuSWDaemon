@@ -8,10 +8,17 @@ namespace sw_part_auto_test
         public static void AddEquation(EquationMgr equationMgr,
             string equation)
         {
-            if ((equationMgr.Add(equationMgr.GetCount(), equation)) == 1){
+            Console.WriteLine(" - Equation Manager - Adding Equation - " + equation);
 
+            equationMgr.Add(0, equation);
+
+            if (equationMgr.GetCount() == 1){
+                Console.WriteLine(" - Equation Manager - Equation - " + equation +
+                    " - Successfully Added");
             } else
             {
+                Console.WriteLine(" - WARNING - Equation Manager - Failed to Add Equation - " +
+                    equation);
             }
         }
 
