@@ -140,7 +140,8 @@ namespace sw_part_auto_test
                 model,
                 equationManager,
                 validatedPathBlempDDO,
-                validatedPathProgramState
+                validatedPathProgramState,
+                "C:\\Users\\bolinger\\Desktop\\test install\\GUI.config"
             );
 
             Console.WriteLine(" ... Press Any Key to End Program");

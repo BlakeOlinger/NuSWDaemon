@@ -24,11 +24,11 @@ namespace sw_part_auto_test
 
         public static string[] GetDDTOequationSegments(string DDTOdata)
         {
-            if (DDTOdata.Contains("$"))
+            if (DDTOdata.Contains("!"))
             {
                 Console.WriteLine(" - DDTO Data Valid - Begin Processing");
                 
-                var rawEquationSegments = DDTOdata.Split("$");
+                var rawEquationSegments = DDTOdata.Split("!");
 
                 Console.WriteLine(" - DDTO Raw Equation Segments: ");
 
