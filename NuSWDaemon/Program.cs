@@ -144,9 +144,6 @@ namespace sw_part_auto_test
                 "C:\\Users\\bolinger\\Desktop\\test install\\GUI.config"
             );
 
-            Console.WriteLine(" ... Press Any Key to End Program");
-            Console.Read();
-
             Console.WriteLine(" - Closing All Open SolidWorks Documents");
             swApp.CloseAllDocuments(true);
 
