@@ -5,11 +5,17 @@ namespace NuSWDaemon
 {
     class RunState
     {
-        internal static bool TrueForStringCharacterZero(string path, int start, int end)
+        internal static bool[] GetProgramStates(string path)
         {
             try
             {
-                return File.ReadAllText(path).Substring(start, end).CompareTo("0") == 0;
+                var rawString = File.ReadAllText(path);
+                var programStates = new bool[] { false, false };
+
+                programStates[0] = rawString.Substring(0, 1).CompareTo("0") == 0;
+                programStates[1] = rawString.Substring(1, 1).CompareTo("0") == 0;
+
+                return programStates;
             } catch (ArgumentOutOfRangeException exception)
             {
                 Console.WriteLine(exception);
@@ -19,7 +25,7 @@ namespace NuSWDaemon
                 Console.WriteLine(" ... Press Any Key to Continue");
                 Console.ReadLine();
 
-                return false;
+                return new bool[] { };
             }
         }
     }

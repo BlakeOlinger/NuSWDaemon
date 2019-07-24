@@ -22,21 +22,33 @@ namespace sw_part_auto_test
             
         }
 
-        public static void PopulateDDO(string DDOdata)
+        public static string[] GetDDTOequationSegments(string DDTOdata)
         {
-           /*
-            string[] equationSegments = DDOdata.Split("$");
-
-            if (equationSegments.Length > 1)
+            if (DDTOdata.Contains("$"))
             {
-                Config.DDO.Clear();
+                Console.WriteLine(" - DDTO Data Valid - Begin Processing");
+                /*
+                string[] equationSegments = DDTOdata.Split("$");
 
-                for (var i = 0; i < equationSegments.Length; ++i)
+                if (equationSegments.Length > 1)
                 {
-                    Config.DDO.Add(equationSegments[i]);
+                    Config.DDO.Clear();
+
+                    for (var i = 0; i < equationSegments.Length; ++i)
+                    {
+                        Config.DDO.Add(equationSegments[i]);
+                    }
                 }
+                */
+
+                return new string[] { };
             }
-            */
+            else
+            {
+                Console.WriteLine(" - ERROR - DDTO Data - Invalid Format");
+
+                return null;
+            }
         }
     }
 }

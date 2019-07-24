@@ -26,20 +26,24 @@ namespace sw_part_auto_test
              * and the GUI's call to action, turning itself off
              * and the GUI's write ability on
              */
+            var programState = new bool[] { false, false };
+
             Console.WriteLine(" -- Daemon - Start --");
-            
+            // TODO - refactor to use variables and only read the config
+            // file once per cycle
             do {
-
+                programState = RunState.GetProgramStates(programStatePath);
+                
                 // RunStateCalltoActionDebugPrompt(programStatePath);
-
-                if (RunState.TrueForStringCharacterZero(programStatePath, 1, 1)) {
+                
+                if (programState[1]) {
                     var rawBlempString = Blemp.LoadDDTO(blempDDOpath);
 
-                    // BlempDDTOdebugPrompt(rawBlempString);
-
+                    // BlempLoadDDTOdebugPrompt(rawBlempString);
+                    
                     if (rawBlempString != null)
                     {
-                        Blemp.PopulateDDO(rawBlempString);
+                        var equationSegments = Blemp.GetDDTOequationSegments(rawBlempString);
                         /*
                         SWEquation.AddEquation(
                             equationManager,
@@ -55,16 +59,17 @@ namespace sw_part_auto_test
                             0);
                             */
                     }
+                    
                 }
-
+                
                 Thread.Sleep(300);
                 
-           } while (RunState.TrueForStringCharacterZero(programStatePath, 0, 1));
+           } while (programState[0]);
            
             Console.WriteLine(" -- Daemon - Exit --");
         }
 
-        private static void BlempDDTOdebugPrompt(string rawBlempString)
+        private static void BlempLoadDDTOdebugPrompt(string rawBlempString)
         {
             if (rawBlempString == null)
             {
@@ -86,7 +91,7 @@ namespace sw_part_auto_test
 
         private static void RunStateCalltoActionDebugPrompt(string programStatePath)
         {
-            if (RunState.TrueForStringCharacterZero(programStatePath, 1, 1))
+            if (RunState.GetProgramStates(programStatePath)[1])
             {
                 Console.WriteLine(" - Call to Action State - True");
 
