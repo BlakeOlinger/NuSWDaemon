@@ -58,6 +58,14 @@ namespace sw_part_auto_test
                             equationManager,
                             0);
                             */
+                        var writeSuccess = false;
+
+                        do {
+                            writeSuccess = FileWrite.WriteStringToFileFalseOnFail(
+                                programStatePath, "01"
+                                );
+                            Thread.Sleep(300);
+                                } while (!writeSuccess);
                     }
                     
                 }

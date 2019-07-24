@@ -27,21 +27,30 @@ namespace sw_part_auto_test
             if (DDTOdata.Contains("$"))
             {
                 Console.WriteLine(" - DDTO Data Valid - Begin Processing");
-                /*
-                string[] equationSegments = DDTOdata.Split("$");
+                
+                var rawEquationSegments = DDTOdata.Split("$");
 
-                if (equationSegments.Length > 1)
-                {
-                    Config.DDO.Clear();
+                Console.WriteLine(" - DDTO Raw Equation Segments: ");
 
-                    for (var i = 0; i < equationSegments.Length; ++i)
-                    {
-                        Config.DDO.Add(equationSegments[i]);
-                    }
+                foreach(string segment in rawEquationSegments) {
+                    Console.WriteLine(segment);
                 }
-                */
 
-                return new string[] { };
+                var equationSegments = new string[rawEquationSegments.Length - 1];
+
+                for(var i = 0; i < equationSegments.Length; ++i)
+                {
+                    equationSegments[i] = rawEquationSegments[i];
+                }
+
+                Console.WriteLine(" - DDTO Trimmed Equation Segments: ");
+
+                foreach(string segment in equationSegments)
+                {
+                    Console.WriteLine(segment);
+                }
+
+                return equationSegments;
             }
             else
             {
