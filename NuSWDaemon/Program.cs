@@ -2,7 +2,6 @@
 using SolidWorks.Interop.sldworks;
 using System;
 using System.Diagnostics;
-using System.IO;
 
 namespace sw_part_auto_test
 {
@@ -31,55 +30,27 @@ namespace sw_part_auto_test
 
             var installDirectory = installRoot + "SolidWorks Daemon\\";
 
-            if(!ToppFiles.validateDirectory(installDirectory, "SolidWorks Daemon"))
-            {
-                Console.WriteLine("Could not create install directory");
-
-                return;
-            }
-
-            Console.WriteLine("Valid Install Directory Found");
+            validateInstallDirectory(installDirectory);
 
             var PROG_ID = "SldWorks.Application.24";
             
             var swType = Type.GetTypeFromProgID(PROG_ID);
 
-            if (swType == null)
-            {
-                Console.WriteLine(errorMessage + "Could not Get SW Type");
-
-                return;
-            }
-
-            Console.WriteLine(" - SolidWorks Type Retrieved");
+            validateSWtype(swType, errorMessage);
             
             var swApp = (ISldWorks) Activator.CreateInstance(swType);
 
-            if (swApp == null)
-            {
-                Console.WriteLine(errorMessage + "Could not Instantiate SW Instance");
+            createSWAppInstance(swApp, errorMessage);
 
-                return;
-            }
+            // FIXME - wouldn't make an assumption about a specific .blob file 
+            // - only look for the .git that would be there no matter what
 
-            Console.WriteLine(" - SolidWorks App Instance Created");
-            
-            var blobName = "C-HSSX.blob.SLDPRT";
+            var databaseInstallFile = ".git";
 
-            var blobDirectory = installDirectory + "blob\\";
+            var blobLocalDatabasePath = installDirectory + "blob\\" 
+                + databaseInstallFile;
 
-            if (!ToppFiles.validateDirectory(blobDirectory, "blob"))
-            {
-                Console.WriteLine("Could not create blob directory");
-
-                return;
-            }
-
-            Console.WriteLine("Valid blob directory found");
-
-            var blobPath = installDirectory + blobName;
-
-            if(!ToppFiles.validateBlobFile(blobPath))
+            if(!ToppFiles.validateBlobLocalDatabase(blobLocalDatabasePath, installDirectory))
             {
                 Console.WriteLine("Could not get valid blob local database instance");
 
@@ -87,6 +58,16 @@ namespace sw_part_auto_test
             }
 
             Console.WriteLine("Valid local blob local database instance found");
+
+            // FIXME - set by reading .blob file names in blob directory
+            // then have GUI pass a specific file request through the DDTO
+            // and have this verify it exists
+            // likely have to move this function inside the daemon call to action loop
+            // as well as everything else related to the equation manager and model
+            // related to it
+            var blobName = "C-HSSX.blob.SLDPRT";
+
+            var blobPath = installDirectory + "blob\\" + blobName;
 
             DocumentSpecification documentSpecification =
                 SWDocSpecification.GetDocumentSpecification(swApp, blobPath);
@@ -140,10 +121,14 @@ namespace sw_part_auto_test
 
             Console.WriteLine(" - Created Equation Manager Instance");
 
+            // this will remain in the high level Program area
+            // will likely remove FileValidate class
+            /*
             var programStatePath = "C:\\Users\\bolinger\\Desktop\\test install\\SWmicroservice.config";
 
             var validatedPathProgramState = FileValidate.CheckAndReturnString(programStatePath);
 
+            
             ConfirmExistingOrCreateNewFile(
                 swApp,
                 validatedPathProgramState,
@@ -170,7 +155,12 @@ namespace sw_part_auto_test
                 blempDDOpath,
                 " - Blemp DDO File Found"
                 );
-
+                */
+            // most daemon arguments will move inside the call to action loop
+            // the call to action transfering specific .blob file info will mean
+            // the daemon will have to close all documents before opening a new one
+            // if the .blob is different than the currently opened .blob
+            /*
             Daemon.Start(
                 model,
                 equationManager,
@@ -178,6 +168,7 @@ namespace sw_part_auto_test
                 validatedPathProgramState,
                 "C:\\Users\\bolinger\\Desktop\\test install\\GUI.config"
             );
+            */
 
             Console.WriteLine(" - Closing All Open SolidWorks Documents");
             swApp.CloseAllDocuments(true);
@@ -185,6 +176,44 @@ namespace sw_part_auto_test
             Console.WriteLine("TOPP App SolidWorks C# Daemon Exit");
         }
 
+        private static void createSWAppInstance(ISldWorks sldWorks, string message)
+        {
+            if (sldWorks == null)
+            {
+                Console.WriteLine(message + "Could not Instantiate SW Instance");
+
+                return;
+            }
+
+            Console.WriteLine(" - SolidWorks App Instance Created");
+        }
+
+        private static void validateSWtype(Type type, string message)
+        {
+            if (type == null)
+            {
+                Console.WriteLine(message + "Could not Get SW Type");
+
+                return;
+            }
+
+            Console.WriteLine(" - SolidWorks Type Retrieved");
+        }
+
+        private static void validateInstallDirectory(string path)
+        {
+            if (!ToppFiles.validateDirectory(path, "SolidWorks Daemon"))
+            {
+                Console.WriteLine("Could not create install directory");
+
+                return;
+            }
+
+            Console.WriteLine("Valid Install Directory Found");
+        }
+
+        // likely replace with ToppFiles class
+        /*
         private static void ConfirmExistingOrCreateNewFile(ISldWorks swApp,
             string validateFile, string expectedPath, string message)
         {
@@ -224,5 +253,6 @@ namespace sw_part_auto_test
                 return;
             }
         }
+        */
     }
 }

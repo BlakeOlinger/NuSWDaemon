@@ -16,11 +16,9 @@ namespace NuSWDaemon
                 programStates[1] = rawString.Substring(1, 1).CompareTo("0") == 0;
 
                 return programStates;
-            } catch (ArgumentOutOfRangeException exception)
+            } catch (Exception exception)
             {
                 Console.WriteLine(exception);
-
-                Console.WriteLine(" -- Offending String - " + File.ReadAllText(path));
 
                 Console.WriteLine(" ... Press Any Key to Continue");
                 Console.ReadLine();

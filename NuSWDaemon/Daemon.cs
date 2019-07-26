@@ -29,107 +29,113 @@ namespace sw_part_auto_test
             var programState = new bool[] { false, false };
 
             Console.WriteLine(" -- Daemon - Start --");
+            try { 
 
             do {
                 programState = RunState.GetProgramStates(programStatePath);
 
                 // RunStateCalltoActionDebugPrompt(programStatePath);
 
-                if (programState[1])
-                {
-                    var rawBlempString = Blemp.LoadDDTO(blempDDOpath);
-
-                    // BlempLoadDDTOdebugPrompt(rawBlempString);
-
-                    if (File.Exists(GUIconfigPath))
+                    if (programState[1])
                     {
-                        var writeSuccess = false;
-                        var timeOut = 5;
+                        var rawBlempString = Blemp.LoadDDTO(blempDDOpath);
 
-                        if (rawBlempString != null)
+                        // BlempLoadDDTOdebugPrompt(rawBlempString);
+
+                        if (File.Exists(GUIconfigPath))
                         {
-                            var equationSegments = Blemp.GetDDTOequationSegments(rawBlempString);
+                            var writeSuccess = false;
+                            var timeOut = 5;
 
-                            if (equationSegments != null)
+                            if (rawBlempString != null)
                             {
-                                Console.WriteLine(" - Valid Equations Found - Processing");
+                                var equationSegments = Blemp.GetDDTOequationSegments(rawBlempString);
 
-                                try
+                                if (equationSegments != null)
                                 {
-                                    for (var i = 0; i < equationSegments.Length; ++i)
+                                    Console.WriteLine(" - Valid Equations Found - Processing");
+
+                                    try
                                     {
-                                        SWEquation.AddEquation(
-                                            equationManager,
-                                            equationSegments[i]
-                                            );
+                                        for (var i = 0; i < equationSegments.Length; ++i)
+                                        {
+                                            SWEquation.AddEquation(
+                                                equationManager,
+                                                equationSegments[i]
+                                                );
 
-                                        SWEquation.Build(
-                                            model
-                                            );
+                                            SWEquation.Build(
+                                                model
+                                                );
 
-                                        SWEquation.DeleteEquation(
-                                            equationManager,
-                                            0);
+                                            SWEquation.DeleteEquation(
+                                                equationManager,
+                                                0);
+                                        }
                                     }
+                                    catch (ArgumentOutOfRangeException exception)
+                                    {
+                                        Console.WriteLine(exception);
+                                    }
+
                                 }
-                                catch (ArgumentOutOfRangeException exception)
+                                else
                                 {
-                                    Console.WriteLine(exception);
+                                    Console.WriteLine(" - WARNING - No Valid Equations for Processing Found");
                                 }
 
+                                do
+                                {
+                                    Console.WriteLine(" - Closing Call to Action Semaphore");
+
+                                    writeSuccess = FileWrite.WriteStringToFileFalseOnFail(
+                                        programStatePath, "01"
+                                        );
+
+                                    Thread.Sleep(300);
+                                } while (!writeSuccess && timeOut-- > 0);
+
+                                if (timeOut > 0)
+                                {
+                                    Console.WriteLine(" - Call to Action Semaphore - Successfuly Closed");
+                                }
+                                else
+                                {
+                                    Console.WriteLine(" - ERROR - Could Not Write Call to Action Close Command");
+
+                                    Console.WriteLine(" - Exiting Daemon -");
+
+                                    Console.WriteLine(" -- Daemon - Exit --");
+
+                                    return;
+                                }
                             }
-                            else
-                            {
-                                Console.WriteLine(" - WARNING - No Valid Equations for Processing Found");
-                            }
+
+                            timeOut = 5;
 
                             do
                             {
                                 Console.WriteLine(" - Closing Call to Action Semaphore");
 
                                 writeSuccess = FileWrite.WriteStringToFileFalseOnFail(
-                                    programStatePath, "01"
+                                    GUIconfigPath, "00"
                                     );
 
                                 Thread.Sleep(300);
                             } while (!writeSuccess && timeOut-- > 0);
-
-                            if (timeOut > 0)
-                            {
-                                Console.WriteLine(" - Call to Action Semaphore - Successfuly Closed");
-                            }
-                            else
-                            {
-                                Console.WriteLine(" - ERROR - Could Not Write Call to Action Close Command");
-
-                                Console.WriteLine(" - Exiting Daemon -");
-
-                                Console.WriteLine(" -- Daemon - Exit --");
-
-                                return;
-                            }
                         }
-
-                        timeOut = 5;
-
-                        do
-                        {
-                            Console.WriteLine(" - Closing Call to Action Semaphore");
-
-                            writeSuccess = FileWrite.WriteStringToFileFalseOnFail(
-                                GUIconfigPath, "00"
-                                );
-
-                            Thread.Sleep(300);
-                        } while (!writeSuccess && timeOut-- > 0);
                     }
-                }
                 
                 Thread.Sleep(300);
                 
            } while (programState[0]);
-           
-            Console.WriteLine(" -- Daemon - Exit --");
+
+        } catch (Exception exception)
+                {
+                    Console.WriteLine(exception);
+                }
+
+    Console.WriteLine(" -- Daemon - Exit --");
         }
 
         private static void BlempLoadDDTOdebugPrompt(string rawBlempString)
