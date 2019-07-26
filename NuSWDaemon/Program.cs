@@ -27,6 +27,19 @@ namespace sw_part_auto_test
 
             Console.WriteLine("TOPP App SolidWorks C# Daemon Start");
 
+            var installRoot = InstallRoot.GetInstallRoot();
+
+            var installDirectory = installRoot + "SolidWorks Daemon\\";
+
+            if(!ToppFiles.validateDirectory(installDirectory, "SolidWorks Daemon"))
+            {
+                Console.WriteLine("Could not create install directory");
+
+                return;
+            }
+
+            Console.WriteLine("Valid Install Directory Found");
+
             var PROG_ID = "SldWorks.Application.24";
             
             var swType = Type.GetTypeFromProgID(PROG_ID);
@@ -51,7 +64,29 @@ namespace sw_part_auto_test
 
             Console.WriteLine(" - SolidWorks App Instance Created");
             
-            var blobPath = "C:\\Users\\bolinger\\Desktop\\test install\\C-HSSX.blob.SLDPRT";
+            var blobName = "C-HSSX.blob.SLDPRT";
+
+            var blobDirectory = installDirectory + "blob\\";
+
+            if (!ToppFiles.validateDirectory(blobDirectory, "blob"))
+            {
+                Console.WriteLine("Could not create blob directory");
+
+                return;
+            }
+
+            Console.WriteLine("Valid blob directory found");
+
+            var blobPath = installDirectory + blobName;
+
+            if(!ToppFiles.validateBlobFile(blobPath))
+            {
+                Console.WriteLine("Could not get valid blob local database instance");
+
+                return;
+            }
+
+            Console.WriteLine("Valid local blob local database instance found");
 
             DocumentSpecification documentSpecification =
                 SWDocSpecification.GetDocumentSpecification(swApp, blobPath);
