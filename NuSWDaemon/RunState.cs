@@ -5,25 +5,55 @@ namespace NuSWDaemon
 {
     class RunState
     {
-        internal static bool[] GetProgramStates(string path)
+        private bool runState;
+        private bool actionState;
+        private string blobName;
+
+        internal bool GetRunState()
+        {
+            return runState;
+        }
+
+        internal bool GetActionState()
+        {
+            return actionState;
+        }
+
+        internal string GetBlobName()
+        {
+            return blobName;
+        }
+
+        private RunState(bool runState, bool actionState,
+            string blobName)
+        {
+            this.runState = runState;
+            this.actionState = actionState;
+            this.blobName = blobName;
+        }
+
+        internal static RunState GetProgramState(string path)
         {
             try
             {
-                var rawString = File.ReadAllText(path);
-                var programStates = new bool[] { false, false };
+                var rawString = File.ReadAllText(path).Split("!");
 
-                programStates[0] = rawString.Substring(0, 1).CompareTo("0") == 0;
-                programStates[1] = rawString.Substring(1, 1).CompareTo("0") == 0;
+                var runState = rawString[0].Substring(0, 1).CompareTo("0") == 0;
+                var actionState = rawString[0].Substring(1, 1).CompareTo("0") == 0;
 
-                return programStates;
+                var blobName = rawString.Length > 1 ? rawString[1] : null;
+
+                return new RunState(
+                    runState,
+                    actionState,
+                    blobName
+                    );
+
             } catch (Exception exception)
             {
                 Console.WriteLine(exception);
 
-                Console.WriteLine(" ... Press Any Key to Continue");
-                Console.ReadLine();
-
-                return new bool[] { };
+                return null;
             }
         }
     }

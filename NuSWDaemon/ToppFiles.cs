@@ -1,14 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Text;
 
 namespace NuSWDaemon
 {
     class ToppFiles
     {
-        internal static bool validateDirectory(string path, string name)
+        internal static bool ValidateDirectory(string path, string name)
         {
             if (!Directory.Exists(path))
             {
@@ -21,8 +19,25 @@ namespace NuSWDaemon
             else
                 return true;
         }
+
+        internal static bool ValidateFile(string path, string name)
+        {
+            if (!File.Exists(path))
+            {
+                
+                Console.WriteLine(name + " File Not Found - Attempting to Create");
+
+                File.Create(path).Close();
+
+                return File.Exists(path);
+            }
+            else
+            {
+                return true;
+            }
+        }
         
-        internal static bool validateBlobLocalDatabase(string path, string installDirectory)
+        internal static bool ValidateBlobLocalDatabase(string path, string installDirectory)
         {
             Console.WriteLine("Checking for Install - " + path);
 
@@ -39,9 +54,6 @@ namespace NuSWDaemon
 
                 Console.WriteLine("Installing local blob database instance");
 
-                // how to make the git process -
-                // https://docs.microsoft.com/en-us/dotnet/api/system.diagnostics.process.start?view=netframework-4.8
-
                 using (var process = new Process())
                 {
                     process.StartInfo.UseShellExecute = true;
@@ -50,10 +62,7 @@ namespace NuSWDaemon
                     var argument = "/c cd " + installDirectory 
                         + " && git clone https://github.com/BlakeOlinger/blob " ;
                    
-                    // this is how you pas arguments - git didn't work
                     process.StartInfo.Arguments = argument;
-                    // - this creates a folder 'blob' - remove the autocreate from program
-                    // and add that functionality to the this
 
                     process.Start();
 

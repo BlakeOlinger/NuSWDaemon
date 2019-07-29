@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Threading;
 
 namespace NuSWDaemon
 {
@@ -7,17 +8,31 @@ namespace NuSWDaemon
     {
         internal static bool WriteStringToFileFalseOnFail(string path, string message)
         {
-            try
-            {
-                File.WriteAllText(path, message);
+            var writeSuccess = false;
 
-                return File.ReadAllText(path).CompareTo(message) == 0;
-            } catch (Exception exception)
-            {
-                Console.WriteLine(exception);
+            var flag = false;
 
-                return false;
-            }
+            var timeout = 10;
+
+            do
+            {
+                try
+                {
+                    File.WriteAllText(path, message);
+
+                    flag = true;
+
+                    writeSuccess = File.ReadAllText(path).CompareTo(message) == 0;
+                }
+                catch (Exception exception)
+                {
+                    Console.WriteLine(exception);
+
+                    Thread.Sleep(300);
+                }
+            } while (timeout-- > 0 && !flag);
+
+            return writeSuccess;
         }
     }
 }
