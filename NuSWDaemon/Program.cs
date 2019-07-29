@@ -28,12 +28,12 @@ namespace sw_part_auto_test
 
             ValidateInstallDirectory(installDirectory);
             
-            var databaseInstallFile = ".git";
+            var databaseInstallCheckFileName = ".git";
 
-            var blobLocalDatabasePath = installDirectory + "blob\\" 
-                + databaseInstallFile;
+            var localBlobDatabaseInstancePath = installDirectory + "blob\\" 
+                + databaseInstallCheckFileName;
 
-            ValidateLocalBlobDatabase(blobLocalDatabasePath, installDirectory);
+            ValidateLocalBlobDatabase(localBlobDatabaseInstancePath, installDirectory);
             
             var programStateFileName = "SWmicroservice.config";
 
