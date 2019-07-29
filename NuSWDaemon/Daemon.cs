@@ -9,7 +9,7 @@ namespace sw_part_auto_test
     class Daemon
     {
         public static void Start(string installDirectory, string programStatePath,
-            string GUIconfigPath)
+            string GUIconfigPath, string DDTOpath)
         {
             /*
              * This program listens for a 'call to action bool'
@@ -46,12 +46,6 @@ namespace sw_part_auto_test
                         var swApp = (ISldWorks)Activator.CreateInstance(swType);
 
                         CreateSWAppInstance(swApp);
-
-                        var DDTOfileName = "DDTO.blemp";
-
-                        var DDTOpath = installDirectory + DDTOfileName;
-
-                        ValidateDDTO(DDTOpath, DDTOfileName);
 
                         var blobName = programState.GetBlobName();
 
@@ -205,18 +199,6 @@ namespace sw_part_auto_test
             {
                 File.WriteAllText(path, "01");
             }
-        }
-
-        private static void ValidateDDTO(string path, string fileName)
-        {
-            if (!ToppFiles.ValidateFile(path, fileName))
-            {
-                Console.WriteLine("Could not Create DDTO.blemp");
-
-                return;
-            }
-
-            Console.WriteLine("DDTO.blemp found");
         }
 
         private static void CreateSWAppInstance(ISldWorks sldWorks)

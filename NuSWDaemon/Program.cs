@@ -1,5 +1,6 @@
 ﻿using NuSWDaemon;
 using System;
+using System.IO;
 
 namespace sw_part_auto_test
 {
@@ -47,17 +48,44 @@ namespace sw_part_auto_test
 
             var GUIconfigPath = installDirectory + GUIconfigFileName;
 
-            ValidateGUIconfigFile(GUIconfigPath, GUIconfigFileName);
+            var GUIjarPath = installDirectory + "toppApp.jar";
 
-            InitializeFile(GUIconfigPath, GUIconfigFileName, "00");
+            Console.WriteLine(GUIjarPath);
+
+            if (!File.Exists(GUIjarPath))
+            {
+                ValidateGUIconfigFile(GUIconfigPath, GUIconfigFileName,
+                installDirectory + "\\toppApp.jar");
+
+                InitializeFile(GUIconfigPath, GUIconfigFileName, "00");
+            }
+
+            var DDTOfileName = "DDTO.blemp";
+
+            var DDTOpath = installDirectory + DDTOfileName;
+
+            ValidateDDTO(DDTOpath, DDTOfileName);
 
             Daemon.Start(
                 installDirectory,
                 programStatePath,
-                GUIconfigPath
+                GUIconfigPath,
+                DDTOpath
             );  
 
             Console.WriteLine("TOPP App SolidWorks C# Daemon Exit");
+        }
+
+        private static void ValidateDDTO(string path, string fileName)
+        {
+            if (!ToppFiles.ValidateFile(path, fileName))
+            {
+                Console.WriteLine("Could not Create DDTO.blemp");
+
+                return;
+            }
+
+            Console.WriteLine("DDTO.blemp found");
         }
 
         private static void InitializeFile(string path, string fileName,
@@ -70,10 +98,13 @@ namespace sw_part_auto_test
                 Console.WriteLine(fileName + " Failed to Initialize");
         }
 
-        private static void ValidateGUIconfigFile(string path, string fileName)
+        private static void ValidateGUIconfigFile(string path, string fileName,
+            string GUIjarPath)
         {
+
             if (!ToppFiles.ValidateFile(path, fileName))
             {
+
                 Console.WriteLine("Could not Create " + fileName);
 
                 return;
