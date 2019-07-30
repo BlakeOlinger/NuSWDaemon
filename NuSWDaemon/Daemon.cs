@@ -8,6 +8,8 @@ namespace sw_part_auto_test
 {
     class Daemon
     {
+        private static ISldWorks swApp = null;
+
         public static void Start(string installDirectory, string programStatePath,
             string GUIconfigPath, string DDTOpath)
         {
@@ -43,7 +45,7 @@ namespace sw_part_auto_test
 
                         ValidateSWtype(swType);
 
-                        var swApp = (ISldWorks)Activator.CreateInstance(swType);
+                        swApp = (ISldWorks)Activator.CreateInstance(swType);
 
                         CreateSWAppInstance(swApp);
 
@@ -142,8 +144,10 @@ namespace sw_part_auto_test
                             Console.WriteLine(" - Closing Call to Action Semaphore");
 
                             writeSuccess = FileWrite.WriteStringToFileFalseOnFail(
-                                programStatePath, "01!"
+                                programStatePath, "011!"
                                 );
+
+                            FileWrite.WriteStringToFileFalseOnFail(DDTOpath, "");
 
                             Thread.Sleep(300);
                         } while (!writeSuccess && timeOut-- > 0);
@@ -175,11 +179,23 @@ namespace sw_part_auto_test
 
                             Thread.Sleep(300);
                         } while (!writeSuccess && timeOut-- > 0);
+                    }
+
+                    if (programState.GetCloseBlob())
+                    {
+                        CloseGUIsemaphore(GUIconfigPath);
 
                         swApp.CloseAllDocuments(true);
+
+                        FileWrite.WriteStringToFileFalseOnFail(programStatePath, "011!");
+
+                        Console.WriteLine(" - Opening GUI Call to Action Semaphore");
+
+                        FileWrite.WriteStringToFileFalseOnFail(
+                               GUIconfigPath, "00");
                     }
-                
-                Thread.Sleep(300);
+
+                    Thread.Sleep(300);
                 
            } while (programState.GetRunState());
 
@@ -187,6 +203,9 @@ namespace sw_part_auto_test
                 {
                     Console.WriteLine(exception);
                 }
+
+            if (swApp != null)
+                swApp.CloseAllDocuments(true);
 
     Console.WriteLine(" -- Daemon - Exit --");
         }

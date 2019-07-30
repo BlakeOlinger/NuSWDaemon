@@ -7,7 +7,13 @@ namespace NuSWDaemon
     {
         private bool runState;
         private bool actionState;
+        private bool closeBlob;
         private string blobName;
+
+        internal bool GetCloseBlob()
+        {
+            return closeBlob;
+        }
 
         internal bool GetRunState()
         {
@@ -25,11 +31,12 @@ namespace NuSWDaemon
         }
 
         private RunState(bool runState, bool actionState,
-            string blobName)
+            string blobName, bool closeBlob)
         {
             this.runState = runState;
             this.actionState = actionState;
             this.blobName = blobName;
+            this.closeBlob = closeBlob;
         }
 
         internal static RunState GetProgramState(string path)
@@ -40,13 +47,15 @@ namespace NuSWDaemon
 
                 var runState = rawString[0].Substring(0, 1).CompareTo("0") == 0;
                 var actionState = rawString[0].Substring(1, 1).CompareTo("0") == 0;
+                var closeBlob = rawString[0].Substring(2, 1).CompareTo("0") == 0;
 
                 var blobName = rawString.Length > 1 ? rawString[1] : null;
 
                 return new RunState(
                     runState,
                     actionState,
-                    blobName
+                    blobName,
+                    closeBlob
                     );
 
             } catch (Exception exception)

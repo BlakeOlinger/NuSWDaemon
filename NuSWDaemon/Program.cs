@@ -52,7 +52,7 @@ namespace sw_part_auto_test
 
             ValidateSWconfigFile(programStatePath, programStateFileName);
 
-            InitializeFile(programStatePath, programStateFileName, "01!");
+            InitializeFile(programStatePath, programStateFileName, "011!");
             
             var GUIconfigFileName = "GUI.config";
 
