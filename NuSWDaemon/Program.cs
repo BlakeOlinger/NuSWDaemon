@@ -21,6 +21,14 @@ namespace sw_part_auto_test
              *          SLDWORKS.exe process it will do so invisibily
              */
 
+            /*
+             * Pass to SW Daemon .blob to open:
+             *      the SWdaemon.config file contains
+             *      the runtime config info in 0's and 1's then
+             *      deleminated by a ! after which is the .blob
+             *      to open followed by another !
+             */
+
             Console.WriteLine("TOPP App SolidWorks C# Daemon Start");
 
             var installRoot = InstallRoot.GetInstallRoot();
@@ -34,7 +42,9 @@ namespace sw_part_auto_test
             var localBlobDatabaseInstancePath = installDirectory + "blob\\" 
                 + databaseInstallCheckFileName;
 
-            ValidateLocalBlobDatabase(localBlobDatabaseInstancePath, installDirectory);
+            ValidateLocalBlobDatabase(
+                localBlobDatabaseInstancePath,
+                installDirectory);
             
             var programStateFileName = "SWmicroservice.config";
 
@@ -49,8 +59,6 @@ namespace sw_part_auto_test
             var GUIconfigPath = installDirectory + GUIconfigFileName;
 
             var GUIjarPath = installDirectory + "toppApp.jar";
-
-            Console.WriteLine(GUIjarPath);
 
             if (!File.Exists(GUIjarPath))
             {
@@ -74,6 +82,19 @@ namespace sw_part_auto_test
             );  
 
             Console.WriteLine("TOPP App SolidWorks C# Daemon Exit");
+        }
+
+        private static void ValidateLocalBlobDatabase(string blobDBpath,
+            string installDirectory)
+        {
+            if (!BlobDatabase.ValidateBlobLocalDatabase(blobDBpath, installDirectory))
+            {
+                Console.WriteLine("Could not get valid blob local database instance");
+
+                return;
+            }
+
+            Console.WriteLine("Valid local blob database instance found");
         }
 
         private static void ValidateDDTO(string path, string fileName)
@@ -123,19 +144,6 @@ namespace sw_part_auto_test
             }
 
             Console.WriteLine(fileName + " found");
-        }
-
-        private static void ValidateLocalBlobDatabase(string blobDBpath,
-            string installDirectory)
-        {
-            if (!ToppFiles.ValidateBlobLocalDatabase(blobDBpath, installDirectory))
-            {
-                Console.WriteLine("Could not get valid blob local database instance");
-
-                return;
-            }
-
-            Console.WriteLine("Valid local blob local database instance found");
         }
 
         private static void ValidateInstallDirectory(string path)
