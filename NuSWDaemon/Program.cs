@@ -52,6 +52,8 @@ namespace sw_part_auto_test
 
             ValidateSWconfigFile(programStatePath, programStateFileName);
 
+            Console.WriteLine(programStatePath);
+
             InitializeFile(programStatePath, programStateFileName, "011!");
             
             var GUIconfigFileName = "GUI.config";
