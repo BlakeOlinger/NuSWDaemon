@@ -185,7 +185,8 @@ namespace sw_part_auto_test
                     {
                         CloseGUIsemaphore(GUIconfigPath);
 
-                        swApp.CloseAllDocuments(true);
+                        if (swApp != null)
+                            swApp.CloseAllDocuments(true);
 
                         FileWrite.WriteStringToFileFalseOnFail(programStatePath, "011!");
 
